@@ -1,5 +1,0 @@
-# Filtered WhatsApp Chat - Last 30 days (from 24/03/2025), excluding automated.
-# Original file processed: _chat.txt
-# Filtered on: 2025-04-23 14:04:48
-
-# No messages matched the filtering criteria.

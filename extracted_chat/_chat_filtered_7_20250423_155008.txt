@@ -1,0 +1,81 @@
+# --- START OF AI PROMPT ---
+Analyze the following text, which is a .txt export from our snowsports club's WhatsApp announcement chat (specifically, the filtered content found in the file '_chat_filtered_7_20250423_155008.txt'). Your task is to:
+
+Identify the timeframe: Determine the date range covering the most recent week (7 days) days based on the timestamps/dates within this chat log.
+
+Filter by Time: Focus exclusively on messages sent within that most recent week (7 days)-day period. Pay close attention to the dates associated with each message.
+
+Filter by Content Relevance: Extract only the substantive announcements and key information shared during that week (7 days)-day period. This includes:
+
+Details of upcoming events (what, when, where, cost, sign-up info).
+
+Information about trips (destination, dates, deadlines, links).
+
+All mentioned deadlines (payments, forms, applications).
+
+Important club updates (committee news, kit info, policy changes).
+
+Calls to action (voting, surveys, requests for volunteers).
+
+Important links shared.
+
+Exclude Irrelevant Content: Strictly ignore messages older than the identified week (7 days)-day period. Also, ignore conversational filler, simple replies ("Ok", "Thanks", emojis), basic questions that don't contain new info, off-topic chat, and standard system messages (like "[user] joined/left" or message timestamps/sender names if they aren't part of the core announcement message itself).
+
+Summarize: Provide a fun tl;dr (too long; didn't read) style summary of the relevant information extracted from the specified week (7 days)-day timeframe. Start with a short, engaging introductory sentence or two. Then, structure the main points clearly using bullet points, potentially grouped by topic (e.g., Events, Deadlines, Updates) for easy reading. Keep the tone light and informal while ensuring all key info is captured.
+# --- END OF AI PROMPT ---
+
+# --- START OF FILTERED CHAT CONTENT ---
+# WhatsApp Chat Filtered Output
+# Original file: _chat.txt
+# Filtered on: 2025-04-23 15:50:08
+# Criteria: Messages from 16/04/2025 onwards (Last 7 days), excluding automated/system messages.
+# Kept 9 user messages.
+
+[16/04/2025, 8:36:32 pm] Ruby Allen: 😈 *SHEFFSNOW REVIEW* 😈
+Reminder to fill in your highs and lows of the year for my end of year review ✨️
+I've been making canva my slave for this, I just need more of your best bits and piccies 🔔🔔
+https://docs.google.com/forms/d/1369GkpKuSEXHb6o6o0ZQLCNi59aJcZD4xluczRnlvLI/edit?usp=drivesdk
+You don't have to fill in every question, can just give me your best best or worst worst moments if you're passionate.
+I should be doing my diss but this is more important,
+SheffSnow x
+
+[16/04/2025, 8:42:56 pm] ~ May Allah Bless You: ‎~ May Allah Bless You left
+
+[16/04/2025, 8:55:35 pm] Sleepy Sec SheffSnow: Hey, you should have received an email today (or if not in the next couple of days) about your damage deposit from our easter trip 🤑
+*any issues or disputes with your deposit contact NUCO customer service via their online chat function* 
+If you’ve not been on a trip you also may need to enter your bank details online via your account - details are in the email x ‎<This message was edited>
+
+[17/04/2025, 9:45:38 am] Ruby Allen: It’s coming to the end of another era. It feels almost mandatory that we’ve got to sesh it out in one last big Celebration. Of course I'm talking about the SheffSnow 2025 Snow Ball! ❄️ 
+We’ve once again booked out Grappa for Wednesday the 7th of May at 19:00. Prices are estimated to cost £30 per person however a finalised cost along with food options & seating preferences will be sent out within the sign up form released this friday (18th) in the group chats. This price will include (PP):
+- main course
+- half a bottle of wine
+- choice between a starter or a desert.
+The menu will also have vegan, vegetarian and gluten free options. Discounted drinks will also be available for purchase at Grappa throughout the night. 🍺
+This somewhat “sophisticated” event gives us all that one last chance to get absolutely twatted before the dreaded exam season. So dress up all fancy in your finest suits, dresses and ties. Everyone is free to bring plus ones, however make sure they have also bought a ticket.
+You can also expect the return of the much anticipated awards ceremony to laugh at and remind ourselves who's done the most stupid things this year that they'd hoped everyone would forget. Submissions for different awards will be included within the signup form. 🏆 
+Pres and group photos will be held as tradition at the waterworks wetherspoons/city hall from 18:00. Legend has it, there might even be free booze for those who show up on time.
+To top it all off in true SheffSnow fashion we will absolutely be ROARing afterwards till lights on. Options to get yourself a ticket will also be included within the form released on the 18th. 🐯 
+Piste and Ball Love, 
+SheffSnow xxx
+                    https://www.instagram.com/p/DIgDV7zN3vo/?igsh=bnQzZ2tkazQ1d291
+
+[18/04/2025, 5:27:25 pm] Morgan Tilling SheffSnow: *SnowBall on 7/5/25* is once again being held at Grappa. Form to get a place is below. There is limited space and places are first come first serve, so if you want to come fill it in before it’s too late. 
+Any questions drop me a message or leave it in the socials chat. 
+https://docs.google.com/forms/d/e/1FAIpQLSf1mpIzmZCd901f0HISWRdXBTo2gWHo7Yrs436T3QE6XkniJQ/viewform?usp=header
+
+[21/04/2025, 12:11:47 am] ~ Rahesh Chauhan: ‎~ Rahesh Chauhan left
+
+[21/04/2025, 12:12:55 am] ‪+1 (548) 580‑5281‬: ‎‪+1 (548) 580‑5281‬ left
+
+[22/04/2025, 11:25:46 am] Ruby Allen: 🚨 *5 DAYS LEFT TO APPLY FOR AGM* 🚨
+Hey everyone,
+This is your reminder to *submit your manifesto* if you are wanting to be on committee next year!! Please try and do this sooner rather than later so I can make sure we have someone for every position 🤩🤩
+The applications have started coming in and it's shaping up to be an amazing group. If you have any questions at all please message any of committee. We encourage as many of you as possible to apply 🕺🕺.
+🕐🕐 Remember final deadline: *27th April at 9am!!* 
+Piste and Love,
+SheffSnow x🏂
+Apply here: https://forms.gle/a42gu5nWeBKah1um6 ‎<This message was edited>
+
+[23/04/2025, 11:50:06 am] ~ John Stones: ‎~ John Stones left
+
+# --- END OF FILTERED CHAT CONTENT ---
