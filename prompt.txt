@@ -1,0 +1,23 @@
+Analyze the following text, which is a .txt export from our snowsports club's WhatsApp announcement chat. Your task is to:
+
+Identify the timeframe: Determine the date range covering the most recent 7 days based on the timestamps/dates within this chat log.
+
+Filter by Time: Focus exclusively on messages sent within that most recent 7-day period. Pay close attention to the dates associated with each message.
+
+Filter by Content Relevance: Extract only the substantive announcements and key information shared during that 7-day period. This includes:
+
+Details of upcoming events (what, when, where, cost, sign-up info).
+
+Information about trips (destination, dates, deadlines, links).
+
+All mentioned deadlines (payments, forms, applications).
+
+Important club updates (committee news, kit info, policy changes).
+
+Calls to action (voting, surveys, requests for volunteers).
+
+Important links shared.
+
+Exclude Irrelevant Content: Strictly ignore messages older than the identified 7-day period. Also, ignore conversational filler, simple replies ("Ok", "Thanks", emojis), basic questions that don't contain new info, off-topic chat, and standard system messages (like "[user] joined/left" or message timestamps/sender names if they aren't part of the core announcement message itself).
+
+Summarize: Provide a fun tl;dr (too long; didn't read) style summary of the relevant information extracted from the specified 7-day timeframe. Start with a short, engaging introductory sentence or two. Then, structure the main points clearly using bullet points, potentially grouped by topic (e.g., Events, Deadlines, Updates) for easy reading. Keep the tone light and informal while ensuring all key info is captured.
