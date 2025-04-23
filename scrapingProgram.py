@@ -1,3 +1,5 @@
+# --- START OF FILE scrapingProgram.py (Opera Version) ---
+
 import time
 import json
 import os
@@ -5,24 +7,26 @@ import re
 from datetime import datetime # Keep for timestamp in output filename
 import tkinter as tk
 from tkinter import filedialog, messagebox
+import sys # To help find binary path based on OS
 
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.chrome.options import Options as ChromeOptions
-# from selenium.webdriver.edge.service import Service as EdgeService        # Uncomment for Edge
-# from selenium.webdriver.edge.options import Options as EdgeOptions      # Uncomment for Edge
+# --- Opera Imports ---
+from selenium.webdriver.opera.service import Service as OperaService
+from selenium.webdriver.opera.options import Options as OperaOptions
+# --- End Opera Imports ---
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import (
     NoSuchElementException, TimeoutException, StaleElementReferenceException
 )
-from webdriver_manager.chrome import ChromeDriverManager
-# from webdriver_manager.microsoft import EdgeChromiumDriverManager # Uncomment for Edge
+# --- Opera WebDriver Manager ---
+from webdriver_manager.opera import OperaDriverManager
+# --- End Opera WebDriver Manager ---
 
 
 # --- Configuration ---
-CHAT_NAME = "SheffSnow Announcements"  # <<< --- CHANGE THIS TO THE EXACT CHAT NAME
+CHAT_NAME = "SheffSnow 2024/25 🏂🎿"  # <<< --- CHANGE THIS TO THE EXACT CHAT NAME
 SCROLL_COUNT = 15                      # Number of times to scroll up (adjust as needed)
 SCROLL_PAUSE_TIME = 1.5                # Seconds to wait between scrolls
 WAIT_TIMEOUT = 60                      # Max seconds to wait for elements
@@ -30,12 +34,22 @@ LOGIN_TIMEOUT = 120                    # Max seconds to wait for QR scan / login
 RAW_OUTPUT_FILE = "whatsapp_messages_raw.json" # Output from scraping
 FILTERED_OUTPUT_FILE_SUFFIX = "_filtered"      # Suffix for the filtered file
 USE_SAVED_SESSION = True               # Try reusing a session?
-USER_DATA_DIR = "whatsapp_session"     # Directory for session data
+USER_DATA_DIR = "whatsapp_opera_session" # Directory for session data (can be same or different)
+
+# --- !!! IMPORTANT FOR OPERA !!! ---
+# --- Set the path to your Opera browser executable ---
+# --- Find it: Open Opera, go to opera://about -> "Paths" -> "Install" ---
+# --- Examples ---
+# Windows: OPERA_BINARY_PATH = r"C:\Users\YourUser\AppData\Local\Programs\Opera\launcher.exe"
+# macOS:   OPERA_BINARY_PATH = "/Applications/Opera.app/Contents/MacOS/Opera"
+# Linux:   OPERA_BINARY_PATH = "/usr/bin/opera" # Or wherever it's installed
+# --- Set the correct path below, or leave as None to try auto-detection (might fail) ---
+OPERA_BINARY_PATH = "C:\Users\fredd\AppData\Local\Programs\Opera GX"  # <<< --- SET THIS PATH IF NEEDED!
 
 # --- Locators (Check/Update these if script fails - WhatsApp Web changes often) ---
+# (Locators are usually browser-independent for web pages, so keep them as they are)
 QR_CODE_SELECTOR = '[data-testid="qrcode"]'
 LOGGED_IN_INDICATOR = '#pane-side' # Element indicating successful login
-# Search box - using a potentially more robust XPath first, then fallback
 SEARCH_XPATH_PRIMARY = '//div[contains(@class, "lexical-rich-text-input")]//p[@class="selectable-text copyable-text"][@contenteditable="true"]'
 SEARCH_XPATH_FALLBACK = '//div[@contenteditable="true"][@data-tab="3"]' # Original fallback
 CHAT_LINK_XPATH_TEMPLATE = f'//span[@title="{CHAT_NAME}"]' # Finds chat by title
@@ -48,9 +62,55 @@ TIMESTAMP_XPATH = './/span[@data-testid="message-meta"]//span' # Timestamp (rela
 # --- Selenium Scraping Functions ---
 
 def setup_driver():
-    """Sets up the Selenium WebDriver."""
-    options = ChromeOptions()
-    # options = EdgeOptions() # Uncomment for Edge
+    """Sets up the Selenium WebDriver for Opera."""
+    options = OperaOptions()
+
+    # --- Set Opera Binary Location ---
+    # Try to auto-detect if not set, but manual path is more reliable
+    opera_path = OPERA_BINARY_PATH
+    if not opera_path:
+        try:
+            if sys.platform == "win32":
+                # Common locations on Windows
+                possible_paths = [
+                    os.path.join(os.environ["ProgramFiles"], "Opera", "launcher.exe"),
+                    os.path.join(os.environ["LOCALAPPDATA"], "Programs", "Opera", "launcher.exe"),
+                    os.path.join(os.environ["ProgramFiles(x86)"], "Opera", "launcher.exe"), # Less common now
+                ]
+                for path in possible_paths:
+                    if os.path.exists(path):
+                        opera_path = path
+                        print(f"Auto-detected Opera path: {opera_path}")
+                        break
+            elif sys.platform == "darwin": # macOS
+                if os.path.exists("/Applications/Opera.app/Contents/MacOS/Opera"):
+                     opera_path = "/Applications/Opera.app/Contents/MacOS/Opera"
+                     print(f"Auto-detected Opera path: {opera_path}")
+            elif sys.platform.startswith("linux"):
+                 # Common locations on Linux
+                 possible_paths = ["/usr/bin/opera", "/snap/bin/opera", "/opt/opera/opera"] # Add more if needed
+                 for path in possible_paths:
+                    if os.path.exists(path):
+                        opera_path = path
+                        print(f"Auto-detected Opera path: {opera_path}")
+                        break
+
+            if not opera_path:
+                 print("WARNING: Could not auto-detect Opera binary path. Please set OPERA_BINARY_PATH manually in the script if startup fails.")
+            else:
+                options.binary_location = opera_path
+
+        except Exception as e:
+            print(f"Warning: Error during Opera path auto-detection: {e}. Manual path recommended.")
+            print("Please set OPERA_BINARY_PATH if startup fails.")
+    else:
+        if os.path.exists(opera_path):
+             print(f"Using specified Opera binary path: {opera_path}")
+             options.binary_location = opera_path
+        else:
+             print(f"WARNING: Specified OPERA_BINARY_PATH does not exist: {opera_path}")
+             print("WebDriver might fail to start Opera.")
+
 
     if USE_SAVED_SESSION:
         if not os.path.exists(USER_DATA_DIR):
@@ -60,30 +120,44 @@ def setup_driver():
         options.add_argument(f"user-data-dir={abs_user_data_dir}")
         print(f"Attempting to use session data from: {abs_user_data_dir}")
     # else: # Optional: Use incognito if not saving session
-    #     options.add_argument("--incognito")
+    #     options.add_argument("--private") # Opera uses --private for incognito
 
-    # Standard options
+    # Standard options (mostly Chromium-based, should work)
     options.add_argument("--disable-extensions")
-    # options.add_argument("--headless") # Run headless (no browser window) - may affect login/QR
+    # options.add_argument("--headless") # Run headless - may affect login/QR with WhatsApp Web
     options.add_argument("--start-maximized")
-    options.add_argument('--log-level=3') # Suppress excessive console logs from Chrome/Driver
+    options.add_argument('--log-level=3') # Suppress excessive console logs
     options.add_experimental_option('excludeSwitches', ['enable-logging']) # Suppress DevTools logs
-    # options.add_experimental_option("detach", True) # Keep browser open after script finishes (for debugging)
+    # options.add_experimental_option("detach", True) # Keep browser open after script finishes
 
     try:
-        # Using webdriver-manager
-        service = ChromeService(executable_path=ChromeDriverManager().install())
-        # service = EdgeService(executable_path=EdgeChromiumDriverManager().install()) # For Edge
-        driver = webdriver.Chrome(service=service, options=options)
-        # driver = webdriver.Edge(service=service, options=options) # For Edge
-        print("WebDriver setup successful.")
+        # Using webdriver-manager for Opera
+        print("Installing/Updating operadriver...")
+        service = OperaService(executable_path=OperaDriverManager().install())
+        print("Initializing Opera WebDriver...")
+        driver = webdriver.Opera(service=service, options=options)
+        print("Opera WebDriver setup successful.")
         return driver
     except Exception as e:
-        print(f"Error setting up WebDriver: {e}")
-        print("Please ensure you have Google Chrome (or MS Edge) installed.")
-        print("If using manual webdriver, ensure it's in your PATH or path is correct.")
+        print(f"Error setting up Opera WebDriver: {e}")
+        print("Please ensure you have Opera browser installed.")
+        if OPERA_BINARY_PATH is None:
+            print("Try setting the OPERA_BINARY_PATH variable in the script to your Opera executable.")
+        if "session not created" in str(e) or "cannot find Opera binary" in str(e):
+            print("This often means the Opera binary path is incorrect or couldn't be found.")
+            print("Find the path: In Opera, go to Menu -> Help -> About Opera -> Paths -> 'Install'.")
+            print("Then set the OPERA_BINARY_PATH variable in the script.")
+        elif "executable needs to be in PATH" in str(e):
+             print("This might indicate an issue with operadriver installation or PATH environment variable.")
         return None
 
+# --- wait_for_login, find_and_open_chat, scroll_up_to_load_messages, scrape_messages ---
+# --- save_to_json, is_automated_message, filter_scraped_json_data, run_filter_process_gui ---
+# --- These functions use browser-agnostic Selenium commands or operate on data, ---
+# --- so they generally DO NOT need changes when switching browser. ---
+# --- (Copy the definitions for these functions from the original script here) ---
+
+# ... (Paste the function definitions for wait_for_login here) ...
 def wait_for_login(driver):
     """Waits for the user to log in (QR scan or session load)."""
     print("Opening WhatsApp Web...")
@@ -131,6 +205,7 @@ def wait_for_login(driver):
             print(f"An error occurred during login wait: {e}")
             return False
 
+# ... (Paste the function definitions for find_and_open_chat here) ...
 def find_and_open_chat(driver):
     """Searches for and clicks on the specified chat."""
     print(f"Searching for chat: '{CHAT_NAME}'...")
@@ -205,6 +280,7 @@ def find_and_open_chat(driver):
         traceback.print_exc() # Print traceback for unexpected errors here
         return False
 
+# ... (Paste the function definitions for scroll_up_to_load_messages here) ...
 def scroll_up_to_load_messages(driver):
     """Scrolls up in the message pane to load older messages."""
     print(f"Scrolling up {SCROLL_COUNT} times to load messages...")
@@ -292,7 +368,7 @@ def scroll_up_to_load_messages(driver):
         import traceback
         traceback.print_exc()
 
-
+# ... (Paste the function definitions for scrape_messages here) ...
 def scrape_messages(driver):
     """Finds message elements and extracts sender, text, and timestamp."""
     print("Starting message scraping...")
@@ -407,6 +483,7 @@ def scrape_messages(driver):
         traceback.print_exc()
         return []
 
+# ... (Paste the function definitions for save_to_json here) ...
 def save_to_json(data, filename):
     """Saves data to a JSON file."""
     try:
@@ -421,9 +498,7 @@ def save_to_json(data, filename):
         print(f"An unexpected error occurred saving JSON to {filename}: {e}")
         return False
 
-
-# --- Filtering Logic (Adapted for JSON structure) ---
-
+# ... (Paste the function definitions for is_automated_message here) ...
 def is_automated_message(sender_name, message_content):
     """
     Checks if a message seems like an automated system message based on sender/content.
@@ -511,7 +586,7 @@ def is_automated_message(sender_name, message_content):
     # If none of the above rules triggered, assume it's a user message
     return False
 
-
+# ... (Paste the function definitions for filter_scraped_json_data here) ...
 def filter_scraped_json_data(input_data):
     """
     Filters a list of message dictionaries (from scraped JSON).
@@ -546,9 +621,7 @@ def filter_scraped_json_data(input_data):
     print(f"Filtering complete. Processed: {messages_processed_count}, Kept: {messages_kept_count}, Removed: {messages_removed_count}")
     return filtered_messages, messages_processed_count, messages_kept_count
 
-
-# --- GUI Interaction for Filtering ---
-
+# ... (Paste the function definitions for run_filter_process_gui here) ...
 def run_filter_process_gui():
     """Launches a GUI to select a scraped JSON file and filter it."""
     root = tk.Tk()
@@ -637,8 +710,8 @@ if __name__ == "__main__":
     raw_data_saved = False
     try:
         # --- Part 1: Scraping ---
-        print("--- Starting WhatsApp Scraper ---")
-        driver = setup_driver()
+        print("--- Starting WhatsApp Scraper (using Opera) ---")
+        driver = setup_driver() # This now sets up Opera
         if driver:
             if wait_for_login(driver):
                 if find_and_open_chat(driver):
@@ -658,7 +731,7 @@ if __name__ == "__main__":
             else:
                 print("Login failed or timed out. Exiting scraping part.")
         else:
-            print("WebDriver setup failed. Cannot start scraping.")
+            print("Opera WebDriver setup failed. Cannot start scraping.")
 
     except Exception as e:
         print(f"\n--- An Critical Error Occurred During Scraping ---")
@@ -670,14 +743,15 @@ if __name__ == "__main__":
     finally:
         # Ensure WebDriver is closed even if errors occur during scraping
         if driver:
-            print("Closing WebDriver...")
+            print("Closing Opera WebDriver...")
             try:
                 driver.quit()
-                print("WebDriver closed.")
+                print("Opera WebDriver closed.")
             except Exception as quit_err:
-                print(f"Error occurred while quitting WebDriver: {quit_err}")
+                print(f"Error occurred while quitting Opera WebDriver: {quit_err}")
 
     # --- Part 2: Optional Filtering via GUI ---
+    # (This part remains unchanged as it works on the saved file)
     if raw_data_saved:
          print("\n--- Scraping finished ---")
          print(f"Raw data saved to: {RAW_OUTPUT_FILE}")
@@ -701,3 +775,5 @@ if __name__ == "__main__":
 
     end_time = time.time()
     print(f"\nScript finished in {end_time - start_time:.2f} seconds.")
+
+# --- END OF FILE scrapingProgram.py (Opera Version) ---
